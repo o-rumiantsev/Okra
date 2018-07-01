@@ -2,11 +2,13 @@
 
 const http = require('http');
 const https = require('https');
-const tools = require('tools');
+const tools = require('common-toolkit');
 
 const scripts = require('./lib/scripts.js');
 const server = require('./lib/server.js');
-const { createApp } = require('./lib/applications.js');
+const applications = require('./lib/applications.js');
+
+const APP_DIR = './application';
 
 const config = {
   port: 3000,
@@ -19,32 +21,25 @@ const api = {
   https
 };
 
-const libFiles = [
+const lib = [
   'api.application.js',
   'api.requests.js'
 ]
-  .map(path => './application/lib/' + path);
-
-const apiFiles = [
-  'test.js'
-]
-  .map(path => './application/api/' + path);
+  .map(path => APP_DIR + '/lib/' + path);
 
 const sandbox = scripts.createSandbox();
-const runScriptFromFile = scripts.injectApiToSandbox(api, sandbox);
+const runner = scripts.prepareRunner(api, sandbox);
 
 scripts.runApplicationScripts(
-  [libFiles],
-  runScriptFromFile
+  [lib],
+  runner
 );
 
-const app = {};
-const preparedApp = scripts.prepareApplication(app, sandbox);
-
 applications.createApp(
-  appDir,
-  preparedApp,
-  err => {
+  APP_DIR,
+  api,
+  sandbox,
+  (err, app) => {
     if (err) {
       console.error(err);
       process.exit(1);
