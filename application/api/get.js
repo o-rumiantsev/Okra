@@ -1,4 +1,4 @@
 (req, res) => {
-  res.write('hello');
+  api.writeHello(res);
   res.end();
 }
