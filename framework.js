@@ -1,54 +1,57 @@
 'use strict';
 
-const tools = require('common-toolkit');
 const { URL } = require('url');
+const fs = require('fs');
+const tools = require('common-toolkit');
 
 const scripts = require('./lib/scripts.js');
 const server = require('./lib/server.js');
 const applications = require('./lib/applications.js');
 const mongoWrapper = require('./lib/mongoWrapper.js');
 
-const config = {
-  application: {
-    directory: './application',
-    db: 'mongodb://localhost:27017/Test'
-  },
-
-  modules: ['console', 'http', 'https'],
-
-  server: {
-    port: 3000,
-    host: 'localhost'
-  }
-};
-
 const api = {
   tools,
 };
 
-config.modules
-  .forEach(
-    module => Object.assign(
-      api, { [module]: require(module) }
-    )
-  );
-
-const applicationScripts = applications
-  .getApplicationScripts(config.application);
-
 const sandbox = scripts.createSandbox();
 const runner = scripts.prepareRunner(api, sandbox);
 
-
 tools.async.sequential([
+  readConfig,
   initDb,
   runScripts,
   createApp
 ], err => {
   if (err) console.error(err);
-})
+});
 
-function initDb(data, callback) {
+function readConfig(data, callback) {
+  const configPath = './config/';
+
+  fs.readdir(configPath, (err, files) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    const config = {};
+
+    files.forEach(file => {
+      file = file.replace(/\..*/, '');
+      config[file] = require(configPath + file);
+    });
+
+    config.modules.forEach(
+      module => Object.assign(
+        api, { [module]: require(module) }
+      )
+    );
+
+    callback(null, { config });
+  });
+}
+
+function initDb({ config }, callback) {
   const db = mongoWrapper();
   const url = new URL(config.application.db);
   const { protocol, host } = url;
@@ -73,7 +76,10 @@ function initDb(data, callback) {
   });
 }
 
-function runScripts(data, callback) {
+function runScripts({ config }, callback) {
+  const applicationScripts = applications
+    .getApplicationScripts(config.application);
+
   scripts.runApplicationScripts(
     applicationScripts,
     runner,
@@ -81,7 +87,7 @@ function runScripts(data, callback) {
   );
 }
 
-function createApp(data, callback) {
+function createApp({ config }, callback) {
   applications.createApp(
     config.application.directory,
     api,
