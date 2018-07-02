@@ -17,6 +17,7 @@ const sandbox = scripts.createSandbox();
 const runner = scripts.prepareRunner(api, sandbox);
 
 let applicationServer = null;
+let database = null;
 
 const start = callback => tools.async
   .sequential([
@@ -37,7 +38,9 @@ const start = callback => tools.async
 
 const stop = () => (
   applicationServer.close(),
-  applicationServer = null
+  database.close(),
+  applicationServer = null,
+  database = null
 );
 
 function readConfig(data, callback) {
@@ -67,25 +70,25 @@ function readConfig(data, callback) {
 }
 
 function initDb({ config }, callback) {
-  const db = mongoWrapper();
+  database = mongoWrapper();
   const url = new URL(config.application.db);
   const { protocol, host } = url;
   const dbUrl = protocol + '//' + host;
   const dbName = url.pathname.substring(1);
 
-  db.connect(dbUrl, err => {
+  database.connect(dbUrl, err => {
     if (err) {
       callback(err);
       return;
     }
 
-    db.open(dbName, err => {
+    database.open(dbName, err => {
       if (err) {
         callback(err);
         return;
       }
 
-      api.db = db;
+      api.db = database;
       callback(null);
     });
   });
@@ -121,6 +124,15 @@ function createApp({ config }, callback) {
   );
 }
 
+
+start(err => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  console.log('Server bound');
+});
 
 module.exports = {
   start,
