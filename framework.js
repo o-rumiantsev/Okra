@@ -16,14 +16,29 @@ const api = {
 const sandbox = scripts.createSandbox();
 const runner = scripts.prepareRunner(api, sandbox);
 
-tools.async.sequential([
-  readConfig,
-  initDb,
-  runScripts,
-  createApp
-], err => {
-  if (err) console.error(err);
-});
+let applicationServer = null;
+
+const start = callback => tools.async
+  .sequential([
+    readConfig,
+    initDb,
+    runScripts,
+    createApp
+  ], (err, data) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    applicationServer = data.server;
+
+    callback(null);
+  });
+
+const stop = () => (
+  applicationServer.close(),
+  applicationServer = null
+);
 
 function readConfig(data, callback) {
   const configPath = './config/';
@@ -98,9 +113,16 @@ function createApp({ config }, callback) {
         return;
       }
 
-      server.boundServer(app, config.server);
-      console.log('Server bound');
-      callback(null)
+      const startedServer = server
+        .boundServer(app, config.server);
+
+      callback(null, { server: startedServer });
     }
   );
+}
+
+
+module.exports = {
+  start,
+  stop
 }
