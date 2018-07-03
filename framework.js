@@ -6,15 +6,15 @@ const tools = require('common-toolkit');
 
 const scripts = require('./lib/scripts.js');
 const server = require('./lib/server.js');
-const applications = require('./lib/applications.js');
-const mongoWrapper = require('./lib/mongoWrapper.js');
+const application = require('./lib/application.js');
+const db = require('./lib/db.js');
 
 const api = {
   tools,
 };
 
 const sandbox = scripts.createSandbox();
-const runner = scripts.prepareRunner(api, sandbox);
+const runScript = scripts.prepareScriptRunner(api, sandbox);
 
 let applicationServer = null;
 let database = null;
@@ -53,9 +53,10 @@ function readConfig(data, callback) {
     }
 
     const config = {};
+    const extension = /\..*/;
 
     files.forEach(file => {
-      file = file.replace(/\..*/, '');
+      file = file.replace(extension, '');
       config[file] = require(configPath + file);
     });
 
@@ -70,7 +71,7 @@ function readConfig(data, callback) {
 }
 
 function initDb({ config }, callback) {
-  database = mongoWrapper();
+  database = db();
   const url = new URL(config.application.db);
   const { protocol, host } = url;
   const dbUrl = protocol + '//' + host;
@@ -95,18 +96,18 @@ function initDb({ config }, callback) {
 }
 
 function runScripts({ config }, callback) {
-  const applicationScripts = applications
+  const applicationScripts = application
     .getApplicationScripts(config.application);
 
   scripts.runApplicationScripts(
     applicationScripts,
-    runner,
+    runScript,
     callback
   );
 }
 
 function createApp({ config }, callback) {
-  applications.createApp(
+  application.createApp(
     config.application.directory,
     api,
     sandbox,
