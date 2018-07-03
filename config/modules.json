@@ -1,3 +1,11 @@
 [
-  "http", "https", "console"
+  "console",
+  "crypto",
+  "dns",
+  "http",
+  "https",
+  "net",
+  "timers",
+  "tls",
+  "url"
 ]
