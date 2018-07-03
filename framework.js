@@ -1,13 +1,13 @@
 'use strict';
 
-const { URL } = require('url');
 const fs = require('fs');
+const { URL } = require('url');
 const tools = require('common-toolkit');
 
-const scripts = require('./lib/scripts.js');
-const server = require('./lib/server.js');
-const application = require('./lib/application.js');
 const db = require('./lib/db.js');
+const server = require('./lib/server.js');
+const scripts = require('./lib/scripts.js');
+const application = require('./lib/application.js');
 const colorify = require('./lib/colors.js');
 
 const api = {
@@ -32,13 +32,13 @@ const start = () => tools.async
     initDb,
     runScripts,
     createApp
-  ], (err, data) => {
+  ], (err, { server }) => {
     if (err) {
       api.fail.log(err);
       return;
     }
 
-    applicationServer = data.server;
+    applicationServer = server;
     api.success.log('Framework successfully started');
   });
 
