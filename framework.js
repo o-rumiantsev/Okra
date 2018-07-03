@@ -44,8 +44,9 @@ const stop = () => (
 );
 
 function readConfig(data, callback) {
-  const configPath = './config/';
-
+  const currentDir = process.cwd();
+  const configPath = currentDir + '/config/';
+  
   fs.readdir(configPath, (err, files) => {
     if (err) {
       callback(err);
