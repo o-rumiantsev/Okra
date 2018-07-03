@@ -29,7 +29,7 @@ let database = null;
 const start = () => tools.async
   .sequential([
     readConfig,
-    initDb,
+    openDb,
     runScripts,
     createApp
   ], (err, { server }) => {
@@ -40,7 +40,33 @@ const start = () => tools.async
 
     applicationServer = server;
     api.success.log('Framework successfully started');
+
+    process.on('uncaughtException', err => {
+      api.error.log(err);
+      restart();
+    });
   });
+
+const restart = () => {
+  api.warning.log('Framework restarting');
+  applicationServer.close(),
+  database.close(),
+  tools.async
+    .sequential([
+      readConfig,
+      openDb,
+      runScripts,
+      createApp
+    ], (err, { server }) => {
+      if (err) {
+        api.fail.log(err);
+        return;
+      }
+
+      applicationServer = server;
+      api.success.log('Framework successfully restarted');
+    })
+};
 
 const stop = () => (
   applicationServer.close(),
@@ -50,6 +76,7 @@ const stop = () => (
   api.info.log('Framework stopped'),
   process.exit(0)
 );
+
 
 function readConfig(data, callback) {
   const currentDir = process.cwd();
@@ -79,7 +106,7 @@ function readConfig(data, callback) {
   });
 }
 
-function initDb({ config }, callback) {
+function openDb({ config }, callback) {
   database = db();
   const url = new URL(config.application.db);
   const { protocol, host } = url;
@@ -136,8 +163,6 @@ function createApp({ config }, callback) {
 
 
 start();
-
-setTimeout(() => stop(), 2000);
 
 module.exports = {
   start,
