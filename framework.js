@@ -47,8 +47,8 @@ const start = () => tools.async
     });
   });
 
-const restart = () => {
-  api.warning.log('Framework restarting');
+const restart = () => (
+  api.warning.log('Framework restarting'),
   applicationServer.close(),
   database.close(),
   tools.async
@@ -66,7 +66,7 @@ const restart = () => {
       applicationServer = server;
       api.success.log('Framework successfully restarted');
     })
-};
+);
 
 const stop = () => (
   applicationServer.close(),
