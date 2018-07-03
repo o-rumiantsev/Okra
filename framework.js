@@ -8,9 +8,16 @@ const scripts = require('./lib/scripts.js');
 const server = require('./lib/server.js');
 const application = require('./lib/application.js');
 const db = require('./lib/db.js');
+const colorify = require('./lib/colors.js');
 
 const api = {
   tools,
+  success: colorify.success,
+  fail: colorify.fail,
+  info: colorify.info,
+  error: colorify.error,
+  debug: colorify.debug,
+  warning: colorify.warning
 };
 
 const sandbox = scripts.createSandbox();
@@ -19,7 +26,7 @@ const runScript = scripts.prepareScriptRunner(api, sandbox);
 let applicationServer = null;
 let database = null;
 
-const start = callback => tools.async
+const start = () => tools.async
   .sequential([
     readConfig,
     initDb,
@@ -27,26 +34,27 @@ const start = callback => tools.async
     createApp
   ], (err, data) => {
     if (err) {
-      callback(err);
+      api.fail.log(err);
       return;
     }
 
     applicationServer = data.server;
-
-    callback(null);
+    api.success.log('Framework successfully started');
   });
 
 const stop = () => (
   applicationServer.close(),
   database.close(),
   applicationServer = null,
-  database = null
+  database = null,
+  api.info.log('Framework stopped'),
+  process.exit(0)
 );
 
 function readConfig(data, callback) {
   const currentDir = process.cwd();
   const configPath = currentDir + '/config/';
-  
+
   fs.readdir(configPath, (err, files) => {
     if (err) {
       callback(err);
@@ -127,14 +135,9 @@ function createApp({ config }, callback) {
 }
 
 
-start(err => {
-  if (err) {
-    console.error(err);
-    return;
-  }
+start();
 
-  console.log('Server bound');
-});
+setTimeout(() => stop(), 2000);
 
 module.exports = {
   start,
