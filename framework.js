@@ -8,6 +8,7 @@ const db = require('./lib/db.js');
 const server = require('./lib/server.js');
 const scripts = require('./lib/scripts.js');
 const application = require('./lib/application.js');
+const filesystem = require('./lib/filesystem.js');
 const colorify = require('./lib/colors.js');
 
 const api = {
@@ -155,6 +156,15 @@ function createApp({ config }, callback) {
 
       const startedServer = server
         .boundServer(app, config.server);
+
+      const watchApiDirectory = filesystem
+        .prepareApiWatcher(app, api, sandbox);
+
+      const apiDir = config.application.directory + '/api';
+      watchApiDirectory(apiDir, apiDir);
+
+      // const libDir = config.application.directory + '/lib/';
+      // [apiDir, libDir].forEach(watchDirectory);
 
       callback(null, { server: startedServer });
     }
