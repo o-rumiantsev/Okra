@@ -5,7 +5,6 @@
     country: 'Macedoia',
     category: 'greatPeople'
   };
-
   api.db.create(entry, err => {
     if (err) {
       api.console.error(err);
