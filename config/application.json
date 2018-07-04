@@ -1,4 +1,4 @@
 {
   "directory": "./application",
-  "db": "mongodb://localhost:27017/Test"
+  "database": "mongodb://localhost:27017/Test"
 }
