@@ -9,6 +9,12 @@
         return;
       }
 
+      if (!great) {
+        rew.write('Ooops, freat people not found :(');
+        res.end();
+        return;
+      }
+      
       delete great.category;
       delete great._id;
       delete great.id;
