@@ -1,25 +1,25 @@
-(req, res) => {
+(client, callback) => {
   api.db
     .select({ category: 'greatPeople' })
     .fetch((err, [great]) => {
       if (err) {
-        api.console.error(err);
-        res.write('Got error :(');
-        res.end();
+        client.res.write('Got error :(');
+        api.error.log(err);
+        callback(err);
         return;
       }
 
       if (!great) {
-        rew.write('Ooops, freat people not found :(');
-        res.end();
+        client.res.write('Ooops, freat people not found :(');
+        callback(null);
         return;
       }
-      
+
       delete great.category;
       delete great._id;
       delete great.id;
 
-      res.write(api.toJSON(great));
-      res.end();
+      client.res.write(api.toJSON(great));
+      callback(null);
     });
 }

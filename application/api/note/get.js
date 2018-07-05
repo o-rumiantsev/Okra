@@ -1,4 +1,4 @@
-(req, res) => {
+(client, callback) => {
   const entry = {
     name: 'Alexander',
     born: -336,
@@ -8,9 +8,9 @@
 
   api.db.create(entry, err => {
     if (err) {
-      api.console.error(err);
-      res.write('Got error :(');
-      res.end();
+      client.res.write('Got error :(');
+      api.error.log(err);
+      callback(err);
       return;
     }
 
@@ -18,7 +18,7 @@
     delete entry._id;
     delete entry.id;
 
-    res.write(api.toJSON(entry));
-    res.end()
+    client.res.write(api.toJSON(entry));
+    callback(null);
   });
 }

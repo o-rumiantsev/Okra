@@ -1,7 +1,7 @@
-(req, res) => {
-  api.writeHello(res);
+(client, callback) => {
+  api.writeHello(client.res);
   const info = `Api: ${!!api};`;
-  res.write(info);
+  client.res.write(info);
   api.console.log(api.db);
-  res.end();
+  callback(null);
 }
