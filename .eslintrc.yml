@@ -4,12 +4,11 @@ env:
 extends: 'eslint:recommended'
 parserOptions:
   sourceType: module
+globals:
+  okra: false
+  api: false
 rules:
-  globals:
-    okra: false
-    api: false
   accessor-pairs: error
-  array-bracket-newline: error
   array-bracket-spacing: error
   array-callback-return: error
   arrow-body-style: error
@@ -50,9 +49,6 @@ rules:
   handle-callback-err: error
   id-blacklist: error
   id-match: error
-  implicit-arrow-linebreak:
-    - error
-    - beside
   indent: 'off'
   indent-legacy: 'off'
   init-declarations: error
@@ -120,7 +116,6 @@ rules:
   no-octal-escape: error
   no-path-concat: error
   no-process-env: error
-  no-process-exit: error
   no-proto: error
   no-prototype-builtins: error
   no-restricted-globals: error
@@ -128,14 +123,12 @@ rules:
   no-restricted-modules: error
   no-restricted-properties: error
   no-restricted-syntax: error
-  no-return-assign: error
   no-return-await: error
   no-script-url: error
   no-self-compare: error
   no-shadow: error
   no-shadow-restricted-names: error
   no-spaced-func: error
-  no-sync: error
   no-tabs: error
   no-template-curly-in-string: error
   no-throw-literal: error
