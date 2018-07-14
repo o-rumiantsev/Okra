@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "common-toolkit": "^0.1.3",
+    "mohican": "^0.2.8",
     "mongodb": "^3.1.0"
   }
 }
