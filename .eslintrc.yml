@@ -64,7 +64,6 @@ rules:
   max-depth: error
   max-len: error
   max-nested-callbacks: error
-  max-params: error
   max-statements-per-line: error
   multiline-ternary: error
   new-cap: error
