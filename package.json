@@ -1,7 +1,7 @@
 {
-  "name": "okra",
+  "name": "okra-framework",
   "version": "0.1.1",
-  "description": "Impress-like application server",
+  "description": "Application server",
   "author": "o-rumiantsev",
   "license": "MIT",
   "main": "okra.js",
@@ -24,9 +24,14 @@
     "url": "git+https://github.com/o-rumiantsev/Okra.git"
   },
   "keywords": [
+    "vegetables",
+    "okra",
+    "vegan",
+    "microservices",
     "framewrork",
     "http",
     "jstp",
+    "rpc",
     "websocket",
     "mohican",
     "javascript",
