@@ -1,1 +1,1 @@
-(email, cb) => cb(null);
+(email, cb) => cb(null, email);
