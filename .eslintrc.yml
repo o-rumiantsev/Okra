@@ -63,7 +63,6 @@ rules:
   lines-between-class-members: error
   max-depth: error
   max-len: error
-  max-lines: error
   max-nested-callbacks: error
   max-params: error
   max-statements-per-line: error
@@ -159,7 +158,6 @@ rules:
   prefer-const: error
   prefer-numeric-literals: error
   prefer-promise-reject-errors: error
-  prefer-reflect: error
   prefer-rest-params: error
   prefer-spread: error
   prefer-template: 'off'

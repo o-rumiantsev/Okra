@@ -1,4 +1,5 @@
 {
+  "name": "application",
   "directory": "./application",
   "database": "mysql://root@localhost/Test"
 }
